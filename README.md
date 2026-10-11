@@ -142,8 +142,8 @@ Switch (التوجيه حسب الإجراء)
 
 ```text
 tracking-daily-work/
-├── src/                              # جذر الموقع (Web Root) — المجلد الوحيد الذي يُنشر على Nginx
-│   ├── index.html                    # الصفحة التعريفية (Landing)
+├── index.html                        # الصفحة التعريفية (Landing) — نقطة الدخول في جذر المشروع
+├── src/                              # كود التطبيق (الصفحات، الأنماط، السكربتات)
 │   ├── auth.html                     # تسجيل الدخول وإنشاء حساب
 │   ├── add-task.html                 # إضافة مهمة جديدة
 │   ├── board.html                    # لوحة كانبان (مهام اليوم)
@@ -188,11 +188,12 @@ tracking-daily-work/
 │   └── n8n/                          # دليل بناء مسارات n8n
 │
 ├── deploy/nginx.conf                 # إعدادات Nginx
-├── Dockerfile                        # صورة الإنتاج (تنسخ src/ فقط)
+├── Dockerfile                        # صورة الإنتاج (تنسخ index.html و src/ فقط)
 └── package.json                      # سكربتات التشغيل المحلي وDocker
 ```
 
 ### قواعد الهيكلة المتبعة
+- **`index.html` في جذر المشروع** (نقطة الدخول الافتراضية للخادم)، وكل صفحات التطبيق داخل `src/` وتعود إليها عبر `../index.html`.
 - **أسماء الملفات والمجلدات** بصيغة `kebab-case` (أحرف صغيرة وشرطات، بدون مسافات).
 - **فصل طبقة الشبكة عن الواجهة:** كل طلبات `axios` موجودة في ملفات `*-service.js` فقط، وملفات الواجهة تستدعي الخدمة.
 - **لا يوجد CSS أو JS مضمّن (inline)** داخل ملفات HTML؛ الأحداث تُربط عبر `addEventListener` و`data-action`.
@@ -206,9 +207,9 @@ tracking-daily-work/
 ### 1. تشغيل الواجهة الأمامية محلياً:
 يمكن تشغيل المشروع باستخدام أي خادم محلي ثابت (مثل Live Server في VS Code):
 ```bash
-npm run dev          # يشغّل src/ على http://localhost:3000
+npm run dev          # يشغّل المشروع على http://localhost:3000
 ```
-ثم افتح المتصفح على: `http://localhost:3000/auth.html`.
+ثم افتح المتصفح على: `http://localhost:3000/` (الصفحة التعريفية) أو `http://localhost:3000/src/auth.html`.
 
 أو عبر Docker:
 ```bash
