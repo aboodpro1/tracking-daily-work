@@ -1,4 +1,22 @@
+# Dependencies
 node_modules/
-.gemini/
+
+# Local AI / editor tooling
 .agent/
+.gemini/
 .impeccable/
+.claude/
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log

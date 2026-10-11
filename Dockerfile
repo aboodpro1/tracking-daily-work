@@ -1,20 +1,14 @@
-# Production Nginx image
-FROM nginx:alpine
+# Production image: static site served by Nginx
+FROM nginx:1.27-alpine
 
-# Set working directory
+# Nginx site configuration
+COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
+
+# Ship only the web root (src/) — docs, workflows and tooling stay out of the image
 WORKDIR /usr/share/nginx/html
-
-# Remove default nginx static assets
 RUN rm -rf ./*
+COPY src/ ./
 
-# Copy custom nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Copy all project files into Nginx document root
-COPY . /usr/share/nginx/html
-
-# Expose port 80
 EXPOSE 80
 
-# Start Nginx
 CMD ["nginx", "-g", "daemon off;"]

@@ -2,8 +2,8 @@
 
 [![n8n Integration](https://img.shields.io/badge/Workflow-n8n-FF6D5A?style=flat-square&logo=n8n&logoColor=white)](https://n8n.io)
 [![Database](https://img.shields.io/badge/Database-Notion-000000?style=flat-square&logo=notion&logoColor=white)](https://notion.so)
-[![UI Design](https://img.shields.io/badge/Design-Vanilla%20CSS%20%2B%20Glassmorphism-2563EB?style=flat-square)](./style.css)
-[![Architecture](https://img.shields.io/badge/Architecture-Webhook%20%E2%86%92%20Switch%20%E2%86%92%20Action-D4AF37?style=flat-square)](./docs/N8N%20Guideline/How%20to%20Build%20a%20Flow.md)
+[![UI Design](https://img.shields.io/badge/Design-Vanilla%20CSS%20%2B%20Glassmorphism-2563EB?style=flat-square)](./src/assets/styles/main.css)
+[![Architecture](https://img.shields.io/badge/Architecture-Webhook%20%E2%86%92%20Switch%20%E2%86%92%20Action-D4AF37?style=flat-square)](./docs/n8n/how-to-build-a-flow.md)
 
 نظام متكامل واحترافي لإدارة ومتابعة المهام اليومية (Kanban Board) مبني بالكامل على تقنيات الويب الحديثة، مع تكامل مباشر وفوري مع **Notion Database** عبر أتمتة **n8n Workflows**.
 
@@ -38,12 +38,12 @@
 - التحقق التلقائي من صحة الجلسة عند كل فتح أو تحديث للصفحة (**Session Guard on Refresh**).
 - تأثير تحميل تفاعلي متطور مع تدرج لوني متحرك ومؤشر دوران سلس.
 
-### 2. 📝 نموذج إضافة المهام (`index.html`)
+### 2. 📝 نموذج إضافة المهام (`add-task.html`)
 - إضافة مهام مفصلة: العنوان، الوصف، التصنيف (دينية، جسم، شغل، دراسة)، الأهمية، والوقت المتوقع.
 - ربط المهمة تلقائياً بالمعرّف الفريد للمستخدم المصادق (`userId`).
 - توليد معرفات حصرية للمهمة (`ID_task`) لمنع التكرار وضمان تتبعها.
 
-### 3. 📋 لوحة كانبان التفاعلية (`todo.html`)
+### 3. 📋 لوحة كانبان التفاعلية (`board.html`)
 - تنظيم فوري للمهام في 3 أقسام رئيسية:
   - ⏳ **قيد الانتظار** (`pending` / `Not started`)
   - ⚙️ **قيد التنفيذ** (`progress` / `In progress`)
@@ -62,7 +62,7 @@
 ```text
 ┌─────────────────────────────────────────────────────────────┐
 │                       Frontend UI                           │
-│     (auth.html  /  index.html  /  todo.html)                 │
+│   (index.html / auth.html / add-task.html / board.html)     │
 └──────────────────────────────┬──────────────────────────────┘
                                │ Axios HTTP (GET / POST)
                                ▼
@@ -101,9 +101,9 @@
 
 | مسار العمل (Workflow) | الملف الرئيسي | الوصف والمسار في n8n |
 | :--- | :--- | :--- |
-| **POST Workflow** | [`n8n-workflow.json`](./n8n-workflow.json) | معالجة إضافة المهام الجديدة وتحديث حالات المهام عند السحب والإفلات. |
-| **Board GET Workflow** | [`n8n-get-board-workflow.json`](./n8n-get-board-workflow.json) | جلب مهام المستخدم المصادق فقط وفلترتها مع إرجاع بيانات مهيكلة للوحة. |
-| **Auth Workflow** | [`n8n-auth-workflow.json`](./source/n8n_workflow/auth-workflow.json) | تسجيل الدخول، إنشاء الحسابات، والتحقق من صلاحية الجلسة. |
+| **POST Workflow** | [`task-post.json`](./workflows/n8n/task-post.json) | معالجة إضافة المهام الجديدة وتحديث حالات المهام عند السحب والإفلات. |
+| **Board GET Workflow** | [`board-get-user-tasks.json`](./workflows/n8n/board-get-user-tasks.json) | جلب مهام المستخدم المصادق فقط وفلترتها مع إرجاع بيانات مهيكلة للوحة. |
+| **Auth Workflow** | [`auth.json`](./workflows/n8n/auth.json) | تسجيل الدخول، إنشاء الحسابات، والتحقق من صلاحية الجلسة. |
 
 ### نمط الـ Webhook $\rightarrow$ Switch المعتمد:
 ```text
@@ -141,35 +141,63 @@ Switch (التوجيه حسب الإجراء)
 ## 📁 دليل هيكل الملفات (Project Structure)
 
 ```text
-2v/
-├── index.html                   # صفحة إضافة مهمة جديدة
-├── todo.html                    # صفحة لوحة كانبان (قائمة المهام)
-├── auth.html                    # صفحة تسجيل الدخول وإنشاء حساب
-├── style.css                    # نظام التصميم الموحد والأنماط البصرية
-├── n8n-workflow.json            # مسار عمل POST الأساسي (Add & Update)
-├── n8n-get-board-workflow.json  # مسار عمل GET الأساسي للوحة
+tracking-daily-work/
+├── src/                              # جذر الموقع (Web Root) — المجلد الوحيد الذي يُنشر على Nginx
+│   ├── index.html                    # الصفحة التعريفية (Landing)
+│   ├── auth.html                     # تسجيل الدخول وإنشاء حساب
+│   ├── add-task.html                 # إضافة مهمة جديدة
+│   ├── board.html                    # لوحة كانبان (مهام اليوم)
+│   │
+│   ├── assets/
+│   │   └── styles/main.css           # نظام التصميم الموحد والأنماط البصرية
+│   │
+│   ├── config/
+│   │   └── app-config.js             # روابط الـ Webhooks ومسارات الصفحات (مصدر واحد)
+│   │
+│   ├── shared/                       # كود مشترك بين كل الميزات
+│   │   ├── services/
+│   │   │   ├── api-client.js         # غلاف axios + أدوات قراءة الاستجابة
+│   │   │   └── session-store.js      # إدارة الجلسة في localStorage (AuthSession)
+│   │   ├── ui/
+│   │   │   ├── toast.js              # إشعارات Toast
+│   │   │   └── page-transitions.js   # شريط التقدم أثناء التنقل
+│   │   └── utils/
+│   │       └── escape-html.js        # الحماية من XSS
+│   │
+│   └── features/                     # مقسمة حسب الميزة (Feature Folders)
+│       ├── auth/
+│       │   ├── auth-service.js       # طلبات الشبكة: دخول، تسجيل، تحقق من الجلسة
+│       │   ├── auth-guard.js         # حماية الصفحات، شريط المستخدم، تسجيل الخروج
+│       │   └── auth-page.js          # واجهة صفحة الدخول (تبويبات، نماذج)
+│       ├── tasks/
+│       │   ├── task-service.js       # طلبات الشبكة: جلب، إضافة، تحديث، حذف
+│       │   ├── task-mappers.js       # تحويل وتوحيد بيانات المهام (بدون DOM)
+│       │   ├── add-task.js           # واجهة نموذج إضافة مهمة
+│       │   └── board.js              # واجهة لوحة كانبان والسحب والإفلات
+│       └── landing/
+│           └── landing-demo.js       # العرض التفاعلي في الصفحة التعريفية
 │
-├── source/
-│   ├── API/
-│   │   ├── Auth_function.js     # منطق المصادقة، فحص الجلسة، والتحويل
-│   │   ├── Add_function.js      # منطق إرسال المهمة والتحقق من المدخلات
-│   │   └── Board_function.js    # منطق جلب وعرض وتحديث لوحة الكانبان
-│   ├── Actions_js/
-│   │   ├── auth.js              # إدارة التبويبات وإظهار كلمة المرور
-│   │   └── Genrate_code_task.js # مولد كود المهمة للواجهة
-│   └── n8n_workflow/            # نسخ مسارات العمل داخل المجلد المصدر
-│       ├── n8n-workflow.json
-│       ├── get-board-workflow.json
-│       └── auth-workflow.json
+├── workflows/n8n/                    # مسارات عمل n8n القابلة للاستيراد
+│   ├── auth.json
+│   ├── task-post.json
+│   └── board-get-user-tasks.json
 │
-└── docs/
-    ├── N8N Guideline/
-    │   └── How to Build a Flow.md # الدليل القياسي لبناء مسارات n8n
-    └── wiki-tech_logic_explanation/
-        ├── AUTH-01_logic.md
-        ├── NOTION_DB_SCHEMA.md
-        └── POST-01_logic.md
+├── docs/
+│   ├── architecture/                 # شرح المنطق التقني ومخطط قاعدة البيانات
+│   ├── guidelines/                   # معايير الواجهة وهيكلة المشروع
+│   └── n8n/                          # دليل بناء مسارات n8n
+│
+├── deploy/nginx.conf                 # إعدادات Nginx
+├── Dockerfile                        # صورة الإنتاج (تنسخ src/ فقط)
+└── package.json                      # سكربتات التشغيل المحلي وDocker
 ```
+
+### قواعد الهيكلة المتبعة
+- **أسماء الملفات والمجلدات** بصيغة `kebab-case` (أحرف صغيرة وشرطات، بدون مسافات).
+- **فصل طبقة الشبكة عن الواجهة:** كل طلبات `axios` موجودة في ملفات `*-service.js` فقط، وملفات الواجهة تستدعي الخدمة.
+- **لا يوجد CSS أو JS مضمّن (inline)** داخل ملفات HTML؛ الأحداث تُربط عبر `addEventListener` و`data-action`.
+- **مصدر واحد للإعدادات:** لتغيير رابط الخادم أو التبديل لبيئة الاختبار عدّل `API_MODE` في `src/config/app-config.js`.
+- **ترتيب تحميل السكربتات:** `config` ← `shared` ← `features/*/…-service.js` ← ملف الصفحة.
 
 ---
 
@@ -178,18 +206,23 @@ Switch (التوجيه حسب الإجراء)
 ### 1. تشغيل الواجهة الأمامية محلياً:
 يمكن تشغيل المشروع باستخدام أي خادم محلي ثابت (مثل Live Server في VS Code):
 ```bash
-# استخدام خادم محلي سريع (مثال عبر npx)
-npx serve .
+npm run dev          # يشغّل src/ على http://localhost:3000
 ```
 ثم افتح المتصفح على: `http://localhost:3000/auth.html`.
+
+أو عبر Docker:
+```bash
+npm run docker:build
+npm run docker:run   # http://localhost:8080
+```
 
 ### 2. استيراد مسارات العمل في n8n:
 1. افتح بيئة **n8n** الخاصة بك.
 2. انقر على **Workflows** ثم **Import from File**.
 3. قم باستيراد الملفات:
-   - `n8n-workflow.json`
-   - `n8n-get-board-workflow.json`
-   - `source/n8n_workflow/auth-workflow.json`
+   - `workflows/n8n/task-post.json`
+   - `workflows/n8n/board-get-user-tasks.json`
+   - `workflows/n8n/auth.json`
 4. تأكد من ضبط بيانات اعتماد Notion API Credential وتفعيل الـ Webhooks.
 
 ---
@@ -197,8 +230,11 @@ npx serve .
 ## 📖 أدلة التطوير ومعايير الـ AI (Guidelines)
 
 لأي تعديل أو إضافة مستقبلية لمسارات العمل، يُرجى مراجعة الدليل المعماري المخصص:
-- 📘 [دليل بناء مسارات n8n (How to Build a Flow.md)](./docs/N8N%20Guideline/How%20to%20Build%20a%20Flow.md)
-- 📋 [تفاصيل مخطط قواعد بيانات Notion (NOTION_DB_SCHEMA.md)](./docs/wiki-tech_logic_explanation/NOTION_DB_SCHEMA.md)
+- 📘 [دليل بناء مسارات n8n](./docs/n8n/how-to-build-a-flow.md)
+- 📋 [تفاصيل مخطط قواعد بيانات Notion](./docs/architecture/notion-db-schema.md)
+- 🔐 [منطق المصادقة والجلسة](./docs/architecture/auth-01-session-logic.md)
+- 🗂️ [معايير هيكلة المشروع](./docs/guidelines/project-structure.md)
+- 🎨 [قواعد تصميم الواجهة](./docs/guidelines/ui-rules.md)
 
 ---
 
