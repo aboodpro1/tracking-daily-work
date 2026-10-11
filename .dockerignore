@@ -3,5 +3,8 @@
 .agent
 .gemini
 .impeccable
+.vscode
 node_modules
+docs
+workflows
 *.md
