@@ -4,7 +4,7 @@
   "private": true,
   "description": "إنجاز — daily task tracking dashboard (static frontend + n8n/Notion backend)",
   "scripts": {
-    "dev": "npx --yes serve src -l 3000",
+    "dev": "npx --yes serve . -l 3000",
     "docker:build": "docker build -t tracking-daily-work .",
     "docker:run": "docker run --rm -p 8080:80 tracking-daily-work"
   }

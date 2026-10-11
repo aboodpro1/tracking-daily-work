@@ -19,7 +19,7 @@ const API_ENDPOINTS = Object.freeze({
 });
 
 const ROUTES = Object.freeze({
-    landing: "index.html",
+    landing: "../index.html",
     auth: "auth.html",
     addTask: "add-task.html",
     board: "board.html",

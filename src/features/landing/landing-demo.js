@@ -8,7 +8,7 @@
  *   data-action="move-hero-card" | "transfer-card"
  *   data-card-id="<card id>"  data-target="<column>"
  *
- * Route:    index.html (landing)
+ * Route:    /index.html (landing, project root)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
